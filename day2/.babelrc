@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "@babel/env",
+      {
+        "targets": {
+          "ie": "7",
+          "chrome": "75"
+        },
+        "corejs": "3",
+        "useBuiltIns": "usage"
+      }
+    ]
+  ],
+  "plugins": [
+    "@babel/plugin-transform-react-jsx",
+    "@babel/plugin-proposal-class-properties"
+  ]
+}

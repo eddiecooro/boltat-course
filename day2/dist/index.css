@@ -1,0 +1,14 @@
+a {
+  margin: 5px;
+}
+
+tr {
+  height: 300px;
+}
+
+.timer {
+  display: block;
+  font-size: 24px;
+  width: 10px;
+  margin: auto;
+}

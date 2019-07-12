@@ -1,0 +1,52 @@
+.container {
+  margin: 20px;
+  perspective: 200px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+}
+
+.timer {
+  font-size: 32px;
+  margin: 30px;
+}
+
+.buttonsContainer {
+  width: '100%';
+  display: flex;
+  flex-direction: row;
+}
+
+.button {
+  flex: 1;
+  padding: 10px 20px;
+}
+.button:hover {
+  cursor: pointer;
+}
+
+.timerContainer {
+  height: 100px;
+  position: relative;
+}
+
+.animatedContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background-color: red;
+  transform-origin: 50% 0%;
+  -webkit-perspective: 200px;
+  transition: transform 1s linear;
+}
+
+.animatedContainer.open {
+  transform: rotateX(0deg);
+}
+
+.animatedContainer.close {
+  transform: rotateX(255deg);
+}

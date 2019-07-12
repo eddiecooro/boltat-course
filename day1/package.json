@@ -1,0 +1,25 @@
+{
+  "name": "day2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "babel": "babel src --out-dir lib",
+    "webpack": "webpack",
+    "webpack:watch": "yarn webpack --watch"
+  },
+  "author": "Eddie_CooRo",
+  "license": "ISC",
+  "dependencies": {
+    "core-js": "3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "@babel/core": "^7.5.0",
+    "@babel/preset-env": "^7.5.0",
+    "@babel/preset-flow": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5"
+  }
+}
