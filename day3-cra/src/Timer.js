@@ -1,26 +1,9 @@
 import React from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import styles from './Timer.module.css';
 
-function AnimatedContainer({ prevTimer }) {
-  const [mounted, setMounted] = React.useState(false);
-  React.useLayoutEffect(() => {
-    requestAnimationFrame(() => {
-      setMounted(true);
-    });
-  }, []);
-  return (
-    <div
-      key={prevTimer}
-      className={`${styles.animatedContainer} ${
-        mounted ? styles.close : styles.open
-      }`}>
-      <p className={styles.timer}>{prevTimer}</p>
-    </div>
-  );
-}
 function Timer({ step = 1, initialValue = 0, startOnMount = false }) {
   const [timer, setTimer] = React.useState(initialValue);
-  const prevTimer = React.useMemo(() => timer - step, [timer]);
   let intervalId = React.useRef(null);
   const start = () => {
     if (intervalId.current) return;
@@ -44,12 +27,23 @@ function Timer({ step = 1, initialValue = 0, startOnMount = false }) {
 
   return (
     <div className={styles.container}>
-      <div className={`${styles.timerContainer} ${''}`}>
-        <div className={`${styles.animatedContainer} ${styles.open}`}>
-          <p className={styles.timer}>{timer}</p>
-        </div>
-        <AnimatedContainer key={String(timer)} prevTimer={prevTimer} />
-      </div>
+      <TransitionGroup className={`${styles.timerContainer}`}>
+        <CSSTransition
+          key={timer}
+          timeout={750}
+          classNames={{
+            enter: styles.enter,
+            enterActive: styles.enter,
+            enterDone: styles.enter,
+            exit: styles.exit,
+            exitActive: styles.exitActive,
+            exitDone: styles.exitDone
+          }}>
+          <div className={`${styles.animatedContainer}`}>
+            <p className={styles.timer}>{timer}</p>
+          </div>
+        </CSSTransition>
+      </TransitionGroup>
       <div className={styles.buttonsContainer}>
         <button className={styles.button} onClick={start}>
           Start
