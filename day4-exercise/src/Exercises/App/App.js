@@ -30,13 +30,17 @@ const App = () => {
   }, [link]);
 
   const navigateToUser = user => setCurrentlySelectedUser(user);
+  const goBack = () => setCurrentlySelectedUser(null);
 
   return currentlySelectedUser ? (
-    <UserCard
-      getPersonById={pId => getPersonById(users, pId)}
-      navigateToUser={navigateToUser}
-      user={currentlySelectedUser}
-    />
+    <>
+      <BackButton onClick={goBack} className={styles.back} />
+      <UserCard
+        getPersonById={pId => getPersonById(users, pId)}
+        navigateToUser={navigateToUser}
+        user={currentlySelectedUser}
+      />
+    </>
   ) : (
     <>
       <UserList navigateToUser={navigateToUser} users={users} />
