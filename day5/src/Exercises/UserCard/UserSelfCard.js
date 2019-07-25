@@ -1,16 +1,31 @@
 import React from 'react';
 import classnames from 'classnames';
 import styles from './UserSelfCard.module.scss';
+import Link from '../EddieRouter/Link';
+import { useUsers } from '../App/App';
 
-const UserSelfCard = ({ user, secondary = false, onClick }) => {
+const UserSelfCard = ({ userId, secondary = false, onClick }) => {
+  const { getPersonById, updateUser } = useUsers();
+  const user = getPersonById(userId);
+  const fetchUser = userId => {
+    return fetch(`http://localhost:3001/persons/${userId}`)
+      .then(res => res.json())
+      .then(res => res.data);
+  };
+  React.useEffect(() => {
+    if (!user) {
+      fetchUser(userId).then(user => updateUser(user));
+    }
+  }, [user]);
+  if (!user) return null;
   return (
     <div className={styles.container}>
-      <div
-        onClick={onClick}
+      <Link
         className={classnames(styles.card, styles.selfCard, {
           [styles.secondary]: secondary,
           [styles.hoverable]: !!onClick
-        })}>
+        })}
+        to={`/user/${user.id}`}>
         <img className={styles.image} src={user.image} />
         <div className={styles.imageDescription}>
           <p>{user.name}</p>
@@ -21,7 +36,7 @@ const UserSelfCard = ({ user, secondary = false, onClick }) => {
           <span className={styles.bullet} />
           <span>{user.age}</span>
         </div>
-      </div>
+      </Link>
     </div>
   );
   return null;

@@ -1,10 +1,8 @@
 import React from 'react';
 import { UserSelfCard } from '../UserCard';
 
-const UserList = ({ users, navigateToUser }) => {
-  return users.map(user => (
-    <UserSelfCard onClick={() => navigateToUser(user)} user={user} />
-  ));
+const UserList = ({ users, history, navigateToUser }) => {
+  return users.map(user => <UserSelfCard history={history} userId={user.id} />);
 };
 
 export default UserList;

@@ -8,6 +8,11 @@ html {
   box-sizing: inherit;
 }
 
+a {
+  color: unset;
+  text-decoration: unset;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
