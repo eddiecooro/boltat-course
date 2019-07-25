@@ -4,8 +4,9 @@ import styles from './UserSelfCard.module.scss';
 
 const UserSelfCard = ({ user, secondary = false, onClick }) => {
   return (
-    <div onClick={onClick} className={styles.container}>
+    <div className={styles.container}>
       <div
+        onClick={onClick}
         className={classnames(styles.card, styles.selfCard, {
           [styles.secondary]: secondary,
           [styles.hoverable]: !!onClick

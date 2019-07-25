@@ -8,9 +8,7 @@ import { getPersonById } from '../../utils';
 
 const App = () => {
   const [users, setUsers] = React.useState([]);
-  const [currentlySelectedUser, setCurrentlySelectedUser] = React.useState(
-    null
-  );
+  const [currentlySelectedUser, setCurrentlySelectedUser] = React.useState([]);
   const [link, setLink] = React.useState(
     'http://localhost:3001/persons?_page=1&_limit=2'
   );
@@ -29,16 +27,18 @@ const App = () => {
     }
   }, [link]);
 
-  const navigateToUser = user => setCurrentlySelectedUser(user);
-  const goBack = () => setCurrentlySelectedUser(null);
+  const navigateToUser = user =>
+    setCurrentlySelectedUser(prevUsers => [...prevUsers, user]);
+  const goBack = () =>
+    setCurrentlySelectedUser(prevUsers => prevUsers.slice(0, -1));
 
-  return currentlySelectedUser ? (
+  return currentlySelectedUser.length > 0 ? (
     <>
       <BackButton onClick={goBack} className={styles.back} />
       <UserCard
         getPersonById={pId => getPersonById(users, pId)}
         navigateToUser={navigateToUser}
-        user={currentlySelectedUser}
+        user={currentlySelectedUser[currentlySelectedUser.length - 1]}
       />
     </>
   ) : (
