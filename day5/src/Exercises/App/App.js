@@ -1,27 +1,31 @@
 import React from 'react';
 import styles from './App.module.scss';
-import families from '../../data.json';
 import loadingIndicator from '../../assets/images/loading.svg';
-import UserCard, { UserSelfCard } from '../UserCard';
+import UserCard from '../UserCard';
 import UserList from '../UserList';
 import { ReactComponent as BackButton } from '../../assets/images/back.svg';
-import { getPersonById } from '../../utils';
-import Route from '../EddieRouter/Route';
-import Router from '../EddieRouter/Router';
-import Link from '../EddieRouter/Link';
-import GoBack from '../EddieRouter/GoBack';
+import { Route, BrowserRouter as Router, Link, Switch } from 'react-router-dom';
+import GoBack from './GoBack';
 
 const UsersContext = React.createContext();
 
 export function useUsers() {
   const { users, updateUser } = React.useContext(UsersContext);
-  console.log(users);
   return {
     users,
     updateUser,
     getPersonById: pId => users.find(user => user.id === pId)
   };
 }
+
+const Homepage = () => {
+  return (
+    <div>
+      <h1 style={{ marginTop: 0 }}>Homepage</h1>
+      <Link to={'/users'}>See users</Link>
+    </div>
+  );
+};
 
 const App = () => {
   const [users, setUsers] = React.useState([]);
@@ -54,38 +58,39 @@ const App = () => {
   return (
     <Router>
       <UsersContext.Provider value={{ users, updateUser }}>
-        <Route exact={true} path="/">
-          <div>
-            <h1 style={{ marginTop: 0 }}>Homepage</h1>
-            <Link to={'/users'}>See users</Link>
-          </div>
-        </Route>
-        <Route exact={true} path={'/users'}>
-          <UserList users={users} />
-          {loading ? (
-            <div className={styles.container}>
-              <img src={loadingIndicator} />
-            </div>
-          ) : null}
-        </Route>
-        <Route
-          path="/user/"
-          render={() => {
-            const userId = Number(window.location.pathname.split('/')[2]);
-            return (
+        <Switch>
+          <Route exact={true} path="/" component={Homepage} />
+          <Route
+            exact={true}
+            path="/users"
+            render={() => (
               <>
-                <GoBack>
-                  <BackButton
-                    // onClick={() => history.goBack()}
-                    className={styles.back}
-                  />
-                </GoBack>
-                <UserCard userId={userId} />
+                <UserList users={users} />
+                {loading ? (
+                  <div className={styles.container}>
+                    <img src={loadingIndicator} />
+                  </div>
+                ) : null}
               </>
-            );
-          }}
-          condition={window.location.pathname.startsWith('/user/')}
-        />
+            )}
+          />
+          <Route
+            path="/user/:userId"
+            render={({ match }) => {
+              const userId = Number(match.params.userId);
+              return (
+                <>
+                  <GoBack>
+                    <BackButton className={styles.back} />
+                  </GoBack>
+                  <UserCard userId={userId} />
+                </>
+              );
+            }}
+            condition={window.location.pathname.startsWith('/user/')}
+          />
+          <Route path="/" render={() => <div>404</div>} />
+        </Switch>
       </UsersContext.Provider>
     </Router>
   );

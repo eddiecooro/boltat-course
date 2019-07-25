@@ -24,13 +24,17 @@ const UserCard = ({ userId }) => {
       <div className={styles.card}>
         <p className={styles.title}>Married to</p>
         {user.marriedTo.map(pId => {
-          return <UserSelfCard secondary={true} userId={pId} />;
+          return (
+            <UserSelfCard hoverable={true} secondary={true} userId={pId} />
+          );
         })}
       </div>
       <div className={styles.card}>
         <p className={styles.title}>Children</p>
         {user.children.map(pId => {
-          return <UserSelfCard secondary={true} userId={pId} />;
+          return (
+            <UserSelfCard hoverable={true} secondary={true} userId={pId} />
+          );
         })}
       </div>
     </div>

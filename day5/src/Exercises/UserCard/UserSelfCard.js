@@ -1,10 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
 import styles from './UserSelfCard.module.scss';
-import Link from '../EddieRouter/Link';
+import { Link } from 'react-router-dom';
 import { useUsers } from '../App/App';
 
-const UserSelfCard = ({ userId, secondary = false, onClick }) => {
+const UserSelfCard = ({ userId, hoverable, secondary = false }) => {
   const { getPersonById, updateUser } = useUsers();
   const user = getPersonById(userId);
   const fetchUser = userId => {
@@ -23,7 +23,7 @@ const UserSelfCard = ({ userId, secondary = false, onClick }) => {
       <Link
         className={classnames(styles.card, styles.selfCard, {
           [styles.secondary]: secondary,
-          [styles.hoverable]: !!onClick
+          [styles.hoverable]: hoverable
         })}
         to={`/user/${user.id}`}>
         <img className={styles.image} src={user.image} />
