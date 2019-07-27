@@ -3,8 +3,6 @@ import styles from './Todo.module.scss';
 import TodoListItem from './TodoListItem';
 import AddTodo from './AddTodo';
 
-class A {}
-
 const TodoList = () => {
   const id = React.useRef(3);
   const [todos, setTodos] = React.useState([
@@ -35,7 +33,7 @@ const TodoList = () => {
     });
   }, [filter, todos]);
 
-  const addTodo = name => {
+  const addTodo = React.useCallback(name => {
     if (name.trim()) {
       setTodos(prevTodos => [
         ...prevTodos,
@@ -47,30 +45,30 @@ const TodoList = () => {
         }
       ]);
     }
-  };
+  }, []);
 
-  const editTodo = (todoId, newName) => {
+  const editTodo = React.useCallback((todoId, newName) => {
     setTodos(prevTodos =>
       prevTodos.map(todo =>
         todo.id !== todoId ? todo : { ...todo, name: newName }
       )
     );
-  };
+  }, []);
 
-  const removeTodo = todoId => {
+  const removeTodo = React.useCallback(todoId => {
     const sure = window.confirm('Are you sure?');
     if (sure) {
       setTodos(prevTodos => prevTodos.filter(todo => todo.id !== todoId));
     }
-  };
+  }, []);
 
-  const toggleTodo = todoId => {
+  const toggleTodo = React.useCallback(todoId => {
     setTodos(prevTodos =>
       prevTodos.map(todo =>
         todo.id !== todoId ? todo : { ...todo, done: !todo.done }
       )
     );
-  };
+  }, []);
 
   const applyFilter = type => () => {
     setFilter(type);

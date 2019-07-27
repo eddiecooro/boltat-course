@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Todo.module.scss';
 
-const AddTodo = ({ addTodo }) => {
+const AddTodo = React.memo(({ addTodo }) => {
   const [todoName, setTodoName] = React.useState('');
 
   const handleTodoNameChange = event => {
@@ -27,6 +27,6 @@ const AddTodo = ({ addTodo }) => {
       </div>
     </div>
   );
-};
+});
 
 export default AddTodo;
