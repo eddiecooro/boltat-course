@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import styles from './App.module.scss';
 import loadingIndicator from '../../assets/images/loading.svg';
 import UserCard from '../UserCard';
 import UserList from '../UserList';
 import { ReactComponent as BackButton } from '../../assets/images/back.svg';
-import { Route, BrowserRouter as Router, Link, Switch } from 'react-router-dom';
+import {
+  Route,
+  Redirect,
+  BrowserRouter as Router,
+  Link,
+  Switch
+} from 'react-router-dom';
 import GoBack from './GoBack';
-import AddUser from '../AddUser';
+import PrivateRoute from '../PrivateRoute';
+import Auth, { useAuth } from '../Auth';
+// import AddUser from '../AddUser';
+const AddUser = lazy(() => import('../AddUser'));
 
 const UsersContext = React.createContext();
 
@@ -20,11 +29,30 @@ export function useUsers() {
   };
 }
 
+const SpotifyCallback = ({ location }) => {
+  const { login } = useAuth();
+  const accessToken = location.hash
+    .slice(1)
+    .split('&')[0]
+    .split('=')[1];
+  login(accessToken);
+  return <Redirect to="/users" />;
+};
+
 const Homepage = () => {
+  const { logout } = useAuth();
   return (
     <div>
       <h1 style={{ marginTop: 0 }}>Homepage</h1>
       <Link to={'/users'}>See users</Link>
+      <br />
+      <a href="https://accounts.spotify.com/authorize?client_id=451764dd4587472590d910723e9e2beb&redirect_uri=http://localhost:3000/callback/&scope=user-read-private%20user-read-email&response_type=token">
+        Login
+      </a>
+      <br />
+      <a href={undefined} onClick={() => logout()}>
+        Logout
+      </a>
     </div>
   );
 };
@@ -32,7 +60,7 @@ const Homepage = () => {
 const App = () => {
   const [users, setUsers] = React.useState([]);
   const [link, setLink] = React.useState(
-    'http://localhost:3001/persons?_page=1&_limit=2'
+    'https://boltatserver.liara.run/persons?_page=1&_limit=2'
   );
   const [loading, setLoading] = React.useState(true);
 
@@ -62,51 +90,56 @@ const App = () => {
   };
 
   return (
-    <Router>
-      <UsersContext.Provider value={{ users, updateUser, addUser }}>
-        <Switch>
-          <Route exact={true} path="/" component={Homepage} />
-          <Route
-            exact={true}
-            path="/users"
-            render={() => (
-              <>
-                <UserList users={users} />
-                <div className={styles.container}>
-                  <Link to="/users/add">
-                    <div className={`${styles.card} ${styles.hoverable}`}>
-                      + Add user
-                    </div>
-                  </Link>
-                </div>
-                {loading ? (
-                  <div className={styles.container}>
-                    <img src={loadingIndicator} />
-                  </div>
-                ) : null}
-              </>
-            )}
-          />
-          <Route path="/users/add" component={AddUser} />
-          <Route
-            path="/user/:userId"
-            render={({ match }) => {
-              const userId = Number(match.params.userId);
-              return (
+    <Auth>
+      <Router>
+        <UsersContext.Provider value={{ users, updateUser, addUser }}>
+          <Switch>
+            <Route exact={true} path="/" component={Homepage} />
+            <Route path="/callback" component={SpotifyCallback} />
+            <PrivateRoute
+              exact={true}
+              path="/users"
+              render={() => (
                 <>
-                  <GoBack>
-                    <BackButton className={styles.back} />
-                  </GoBack>
-                  <UserCard userId={userId} />
+                  <UserList users={users} />
+                  <div className={styles.container}>
+                    <Link to="/users/add">
+                      <div className={`${styles.card} ${styles.hoverable}`}>
+                        + Add user
+                      </div>
+                    </Link>
+                  </div>
+                  {loading ? (
+                    <div className={styles.container}>
+                      <img src={loadingIndicator} />
+                    </div>
+                  ) : null}
                 </>
-              );
-            }}
-            condition={window.location.pathname.startsWith('/user/')}
-          />
-          <Route path="/" render={() => <div>404</div>} />
-        </Switch>
-      </UsersContext.Provider>
-    </Router>
+              )}
+            />
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <Route path="/users/add" component={AddUser} />
+            </Suspense>
+            <Route
+              path="/user/:userId"
+              render={({ match }) => {
+                const userId = Number(match.params.userId);
+                return (
+                  <>
+                    <GoBack>
+                      <BackButton className={styles.back} />
+                    </GoBack>
+                    <UserCard userId={userId} />
+                  </>
+                );
+              }}
+              condition={window.location.pathname.startsWith('/user/')}
+            />
+            <Route path="/" render={() => <div>404</div>} />
+          </Switch>
+        </UsersContext.Provider>
+      </Router>
+    </Auth>
   );
 };
 
